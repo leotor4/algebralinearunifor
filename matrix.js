@@ -35,6 +35,9 @@ class Matrix{
 
     getIndex(i, j)
     {
+        if(i <1 || i>this.rows) throw "O indice da linha esta fora dos valores permitidos."
+        if(j <1 || j>this.cols) throw "O indice da coluna esta fora dos valores permitidos."
+
         return (j - 1) + (i - 1) * this.cols
     }
 }
