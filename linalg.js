@@ -137,6 +137,22 @@ class LinearAlgebra{
     //funcao multiplicacao de matriz ou matriz x matriz
     dot(a,b)
     {
+        if(a.cols != b.rows)
+            throw "matrizes incompativeis. Num de colunas de A diferente do num de linhas  de B"
 
+        let c = new Matrix(a.cols,b.rows)
+
+        for(var i=1; i<= a.rows; i++)
+        {
+            for(var j=1; j<=b.cols; j++)
+            {
+                for(var k=1; k<=a.rows; k++)
+                {
+                    c.set(i, j, c.get(i,j) + a.get(i,k)*b.get(k,j))
+                }
+            }
+        }
+
+        return c
     }
 }
