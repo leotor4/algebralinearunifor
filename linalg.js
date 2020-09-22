@@ -155,4 +155,9 @@ class LinearAlgebra{
 
         return c
     }
+
+    solve(a)
+    {
+        return this.transpose(a);
+    }
 }
