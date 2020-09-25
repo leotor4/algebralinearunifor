@@ -20,7 +20,9 @@ window.onload = function () {
                 fileContents.innerText = ' ';
 
                 var first = 1
-
+                var tempValue = ''
+                var indices = []
+                var index = 0
                 for(var i=0; i<a.length-1; i++)
                 {
                     if(!(a[i].startsWith('%')))
@@ -28,21 +30,58 @@ window.onload = function () {
                         if(first == 1)
                         {
                             var b = a[i].split('')
-                            matrizIn = new Matrix(parseInt(b[0]), parseInt(b[2]))
+
+                            for(var g=0; g<b.length; g++)
+                            {
+                                if(b[g] != ' ')
+                                {
+                                    tempValue+=b[g]
+                                }else
+                                {
+                                    indices[index] = parseInt(tempValue)
+                                    index++
+                                    tempValue = ''
+                                }
+                            }
+                            matrizIn = new Matrix(indices[0], indices[1])
                             first = 0
+                            index = 0
+                            console.log("indice 0: umavez " + indices[0])
+                            console.log("indice 1: umavez" + indices[1])
                         }else
                         {
+
                             var b = a[i].split('')
                             fileContents.append(a[i])
                             fileContents.innerHTML+="<br>"
-                            var tempValue=''
+                            tempValue=''
     
-                            for(let j=4; j<b.length; j++)
+                            for(var g=0; g<b.length; g++)
                             {
-                                tempValue+= b[j]
+                                console.log("g:" + g)
+                                if(b[g] != ' ')
+                                {
+                                    //console.log(b[g])
+                                    tempValue+=b[g]
+                                    
+                                }else
+                                {
+                                    console.log(tempValue)
+                                    indices[index] = parseInt(tempValue)
+                                    //onsole.log("index: " + index)
+                                    index++
+                                    tempValue = ''
+                                }
                             }
-                        
-                            matrizIn.set(parseInt(b[0]),parseInt(b[2]), parseInt(tempValue))
+                            console.log(tempValue)
+                            indices[index] = parseInt(tempValue)
+                            //onsole.log("index: " + index)
+                            tempValue = ''
+                            index=0
+                            //console.log("indice 0: " + indices[0])
+                            //console.log("indice 1: " + indices[1])
+                            //console.log("indice 2: " + indices[2])
+                            matrizIn.set(indices[0],indices[1], indices[2])
                         }
  
                     }
