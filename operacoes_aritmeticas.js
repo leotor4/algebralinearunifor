@@ -1,6 +1,6 @@
 //Essa classe representa as operações elementares com linhas
 // de uma matriz. Pag 7 do livro.
-class OpAlgebricas
+class OpElementares
 {
     //Operação: troca duas equações (linhas) entre si. Pag 7 do livro.
     //Troca a posicao da linha a com a linha b
