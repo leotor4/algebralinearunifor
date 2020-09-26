@@ -6,7 +6,7 @@ class Gauss
     {
         var i = 1
         var j = 1
-        while(i < a.rows && j < a.cols)
+        while(i <= a.rows && j <= a.cols)
         {
             //procurar por um numero não nulo na coluna j ou abaixo da linha i
             var k = i 
@@ -32,60 +32,51 @@ class Gauss
             }
             j++;
         }
+
+        var s = a.rows
+
+        j = 1
+        
+        while(s>1)
+        {
+            var y = 1;
+            var pivo
+            var pivoIndexCol = 0
+            var naoNulo = 0
+            while(y<a.cols)
+            {
+                
+                if(a.get(s,y) == 1)
+                {
+                    naoNulo = 1;
+                    pivoIndexCol = y;
+                    break;
+                }
+                y++;
+            }
+
+            if(naoNulo == 1)
+            {
+                var k = s - 1
+
+                for(var h=0; h<s-1; h++)
+                {
+
+                    if(a.get(k,pivoIndexCol) != 0)
+                    {
+                        
+                        elementar.somaConstanteInversa(a,s,k,a.get(k,pivoIndexCol))
+
+                    }
+                    k--
+                }
+                 
+            }
+            s--
+        }
         
 
-        var pivoIndex
-        var pivo
-        var temPivo=0
-        var passou = 0
-        for(var z=a.rows;z>1;z--)
-        {
-            console.log("leo")
-        for(var y=1; y<=6;y++)
-            {
-                console.log("laise")
-                if(a.get(z,y) != 0 && passou ==0)
-                {
-
-                    
-                    temPivo = 1;
-                    pivo = a.get(z,y);
-                    pivoIndex = y;     
-                    passou =1;
-                }
-            }
    
-
-            if(temPivo == 1){
-                temPivo=0;
-                if(pivo != 1){
-                    a.set(z,pivoIndex,1)
-                   
-                    //A[z][pivoIndex] = 1;
-                    for(var y=pivoIndex+1; y<=6;y++)
-                    {
-                        a.set(z,y, a.get(z,y) * (1/pivo))
-                        //A[z][y] = A[z][y] * (1/pivo);
-                    }
-                }
-                
-                for(var t=z-1; t>=1;t--)
-                {
-                    
-                    var j=1;
-                    var mult = -a.get(t,pivoIndex) //-A[t][pivoIndex];
-                    while(j<=6)
-                    {
-                        a.set(t,j, a.get(z,j) * mult + a.get(t,j))
-                        
-                    	//A[t][j] = A[z][j] * mult + A[t][j];
-                        j++;
-                    }
-                }
-
-            }
-            passou = 0;
-        }
 
 
 

@@ -17,7 +17,7 @@ window.onload = function () {
                 fileContents.innerText = ' '
 
                 var a = fileReader.result.split('\n')
-                fileContents.innerText = ' ';
+                //fileContents.innerText = ' ';
 
                 var first = 1
                 var tempValue = ''
@@ -46,19 +46,18 @@ window.onload = function () {
                             matrizIn = new Matrix(indices[0], indices[1])
                             first = 0
                             index = 0
-                            console.log("indice 0: umavez " + indices[0])
-                            console.log("indice 1: umavez" + indices[1])
+                            //console.log("indice 0: umavez " + indices[0])
+                            //console.log("indice 1: umavez" + indices[1])
                         }else
                         {
 
                             var b = a[i].split('')
-                            fileContents.append(a[i])
-                            fileContents.innerHTML+="<br>"
+                            //fileContents.append(a[i])
+                            //fileContents.innerHTML+="<br>"
                             tempValue=''
     
                             for(var g=0; g<b.length; g++)
                             {
-                                console.log("g:" + g)
                                 if(b[g] != ' ')
                                 {
                                     //console.log(b[g])
@@ -66,14 +65,12 @@ window.onload = function () {
                                     
                                 }else
                                 {
-                                    console.log(tempValue)
                                     indices[index] = parseInt(tempValue)
                                     //onsole.log("index: " + index)
                                     index++
                                     tempValue = ''
                                 }
                             }
-                            console.log(tempValue)
                             indices[index] = parseInt(tempValue)
                             //onsole.log("index: " + index)
                             tempValue = ''
@@ -88,10 +85,11 @@ window.onload = function () {
             }
             }
             fileReader.readAsText(fileTobeRead);
+            console.log("Arquivo lido!")
             return matrizIn
-
+            
         }, false);
-
+        
 
 
 }

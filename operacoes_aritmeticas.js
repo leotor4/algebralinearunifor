@@ -47,4 +47,13 @@ class OpElementares
             }
         }
     }
+
+    somaConstanteInversa(matriz, linhaPivo, linha2, elemento)
+    {
+        var elementos = - elemento
+        for(var u=1; u<=matriz.cols; u++)
+        {
+            matriz.set(linha2,u, elementos * matriz.get(linhaPivo, u) + matriz.get(linha2,u))
+        }
+    }
 }
