@@ -11,11 +11,11 @@ class LinearAlgebra{
 
         if(a instanceof Vector)
         {
-            c = new Vector(a.size)
+            c = new Vector(a.size())
             c.rows = a.cols
             c.cols = a.rows
 
-            for(let i=1; i<=c.size; i++)
+            for(let i=1; i<=c.size(); i++)
             {
                 c.set(i, a.get(i))
             }
@@ -153,94 +153,160 @@ class LinearAlgebra{
     //algoritmo de gauss-jordan
     solve(a)
     {
-        var vetor = new Vector(matrizIn.rows)
-		var elementar = new OpElementares
-        var d = new Date();
-        var inicio
-        var fim
-        var i = 1
-        var j = 1
+        this.#isMatrix(a)
+        this.#matrixHasSolveCompability(a)
 
-        inicio = d.getTime()
-        //eliminação gaussiana
-        while(i <= a.rows && j <= a.cols)
+        let c = this.gauss(a).matrix
+
+        for(let j=c.cols-1; j>=2; j--)
         {
-            //procurar por um numero não nulo na coluna j ou abaixo da linha i
-            var k = i 
-
-            while(k <= a.rows && a.get(k,j) == 0)   k++
-
-            //se k sair do while como menor que o num de linhas eh pq tem umm elemento n nulo na coluna j
-            if(k<=a.rows)
+            for(let i=j-1; i>=1; i--)
             {
-                // se k não for a primeira linha, então trocar a linha k com a primeira linha
-                if(k!=i)
-                {
-                    elementar.trocaLinha(a, i, k)
-                }
-
-                if(a.get(i,j) != 1)
-                {
-                    elementar.dividirLinha(a,i,j)
-                }
-
-                elementar.somarConstante(a,i,j)
-                i++
+                let k = (-1*c.get(i,j)) / c.get(j,j)
+                this.multiplyRowByScalarAndPlusRow(c,j,k,i)
             }
-            j++;
         }
 
-        var s = a.rows
-
-        j = 1
-        //Gauss-jordan
-        while(s>1)
+        //Diagonal principal igual a 1
+        for(let j=1; j<=c.cols-1; j++)
         {
-            var y = 1;
-            var pivo
-            var pivoIndexCol = 0
-            var naoNulo = 0
-            while(y<a.cols)
-            {
-                
-                if(a.get(s,y) == 1)
-                {
-                    naoNulo = 1;
-                    pivoIndexCol = y;
-                    break;
-                }
-                y++;
-            }
-
-            if(naoNulo == 1)
-            {
-                var k = s - 1
-
-                for(var h=0; h<s-1; h++)
-                {
-
-                    if(a.get(k,pivoIndexCol) != 0)
-                    {
-                        
-                        elementar.somaConstanteInversa(a,s,k,a.get(k,pivoIndexCol))
-
-                    }
-                    k--
-                }
-                 
-            }
-            s--
+            this.multiplyRowByScalar(c,j,1/c.get(j,j))
         }
-        d = new Date();
-        fim = d.getTime()
+
+        let vector = new Vector(c.rows)
+        for(let i=1; i<=vector.size(); i++)
+        {
+            vector.set(i, c.get(i, c.cols))
+        }
         
-        var colCorrente = a.cols
-        for(var w=1; w<=a.rows; w++)
+        console.log(vector)
+        return vector
+        
+    }
+
+    det(a)
+    {
+        let c = this.gauss(a)
+        let det = c.cof
+
+        for(let i=1; i<=c.matrix.rows; i++)
         {
-            vetor.set(w, a.get(w,a.cols))
+            det *= c.matrix.get(i,i)
         }
-        console.log("Temp de execução: " + (fim - inicio))
-        console.log(vetor)
-        return vetor
+
+        return det
+    }
+
+    gauss(a)
+    {
+        this.#isMatrix(a)
+        this.#matrixHasGaussCompability(a)
+
+        
+        let c = 
+        {
+            matrix: new Matrix(a.rows, a.cols, a.values.slice()),
+            cof: 1
+        }
+
+        for(let j=1; j<=c.matrix.rows; j++)
+        {
+            for(let i=j+1; i<=c.matrix.rows;i++)
+            {
+                if(c.matrix.get(j,j) == 0)
+                {
+                    for(let k=j+1; k<=c.matrix.rows; i++)
+                    {
+                        if(c.matrix.get(k,j) != 0)
+                        {
+                            this.changeRows(c.matrix, j, k)
+                            c.cof *= -1
+                            break
+                        }
+                    }
+                }
+                let k = (-1*c.matrix.get(i,j)) / c.matrix.get(j,j)
+                this.multiplyRowByScalarAndPlusRow(c.matrix, j, k, i)
+            }
+        }
+
+        return c    
+    }
+
+    changeRows(a, ri, rj)
+    {
+        for(let j=1; j<=a.cols; j++)
+        {
+            let aux = a.get(ri,j)
+            a.set(ri, j, a.get(rj,j))
+            a.set(rj, j, aux)
+        }
+    }
+
+    multiplyRowByScalar(a, ri, k)
+    {
+        for(let j=1; j<=a.cols; j++)
+        {
+            a.set(ri, j, k*a.get(ri,j))
+        }
+    }
+
+    multiplyRowByScalarAndPlusRow(a, ri, k, rj)
+    {
+        for(let j=1; j <= a.cols; j++)
+        {
+            a.set(rj, j, k * a.get(ri,j) + a.get(rj,j))
+        }
+    }
+
+    #isMatrix(a)
+    {
+        if(typeof a != "object" || !(a instanceof Matrix))
+        {
+            throw "O parametro b deve ser do tipo matriz."
+        }
+    }
+
+    #matrixHasNullElement(a)
+    {
+        for(let i=0; i<a.values.length; i++)
+        {
+            if(a.values[i] == 0)
+            {
+                throw "A matriz b possui pelo menos um elemento nulo."
+            }
+        }
+    }
+
+    #matrixesHasSameSize(a,b)
+    {
+        if(a.rows != b.rows || a.cols != b.cols)
+        {
+            throw "As matrizes passadas como parametro são incompativeis."
+        }
+    }
+
+    #matrixHasDotCompability(a, b)
+    {
+        if(a.cols != b.rows)
+        {
+            throw "As matrizes passados como parâmetro são imcompativeis!"
+        }
+    }
+
+    #matrixHasSolveCompability(a)
+    {
+        if(a.cols != a.rows + 1)
+        {
+            throw "A matriz passada como parametro é incompativel"
+        }
+    }
+
+    #matrixHasGaussCompability(a)
+    {
+        if(a.cols < a.rows)
+        {
+            throw "A matriz passada como parametro é incompativel!"
+        }
     }
 }
