@@ -7,79 +7,68 @@ class LinearAlgebra{
     */
     transpose(a)
     {
-        let c = new Matrix(a.cols, a.rows);
+        let c
 
-        for(let i = 1; i <= c.rows; i++)
+        if(a instanceof Vector)
         {
+            c = new Vector(a.size)
+            c.rows = a.cols
+            c.cols = a.rows
+
+            for(let i=1; i<=c.size; i++)
+            {
+                c.set(i, a.get(i))
+            }
+        }else if(typeof a == "object" && a instanceof Matrix)
+        {
+            c = new Matrix(a.cols, a.rows);
+
             for(let j = 1; j <= c.cols; j++)
             {
-                c.set(i, j, a.get(j, i));
+                for(let i = 1; i <= c.rows; i++)
+                {
+                    c.set(i, j, a.get(j, i));
+                }
             }
+        }else
+        {
+            throw "O parâmetro não é uma matriz."
         }
 
         return c;
+
     }
 
     //operação de adição. Adiciona uma valor escalar a cada elemento
     // recebe duas matrizes MxN e retorna uma matriz NxM
     plus(a, b)
     {
-        if(a.rows != b.rows || a.cols != b.cols) throw "As matrizes são incompativeis."
-
-        let c = new Matrix(a.rows, a.cols);
-
-        for(let i = 1; i <= c.rows; i++)
-        {
-            for(let j = 1; j <= c.cols; j++)
-            {
-                c.set(i, j, a.get(i, j) + b.get(i, j));
-            }
-        }
-
-        return c;
-
-    }
-
-    
-    scalarmult(k, a)
-    {
-        let c = new Matrix(a.rows, a.cols);
-
+        if((typeof a != "object" || !(a instanceof Matrix)) || (typeof b != "object" || !(b instanceof Matrix)))
+            throw "Parâmetro não é do tipo Matriz"
         
+            if(a.rows != b.rows || a.cols != b.cols) throw "As matrizes são incompativeis."
 
-        return c;
+            let c = new Matrix(a.rows, a.cols);
+    
+            for(let i = 1; i <= c.rows; i++)
+            {
+                for(let j = 1; j <= c.cols; j++)
+                {
+                    c.set(i, j, a.get(i, j) + b.get(i, j));
+                }
+            }
+    
+            return c;
+
     }
 
     
     times(a,b)
     {
-        // se for igual a number, eu faco a operacao escalar matriz
-        if(typeof a == "number")
-        {
-
-            if(typeof b != "object" || !(b instanceof Matrix))
-            {
-                throw "O parametro b deve ser uma matrix."
-            }
-            // operacao "multiplicacao escalar matriz"
-            // multiplica um valor escalar por todos os elementos da matriz
-            let c = new Matrix(a.rows, a.cols);
-
-            for(let i = 1; i <= c.rows; i++)
-            {
-                for(let j = 1; j <= c.cols; j++)
-                {
-                    c.set(i, j, a.get(i, j) * k);
-                }
-            }
-
-            //opercao "multiplicacao elemento a elemento"
-    // multiplica os elementos de uma matriz a pelos elementos de uma matriz b
-    // num de linha e de coluna de matriz A deve ser igual a de B
-        }else if(typeof a == "object" && a instanceof Matrix)
+        if((typeof a == "object" && a instanceof Matrix) && (typeof b == "object" && b instanceof Matrix))
         {
             if(a.rows != b.rows || a.cols != b.cols) throw "As matrizes são incompativeis."
-
+            var c = new Matrix(a.rows, a.cols);
             for(let i = 1; i <= c.rows; i++)
             {
                 for(let j = 1; j <= c.cols; j++)
@@ -89,7 +78,7 @@ class LinearAlgebra{
             }
         }else
         {
-            throw "O parametro a deve ser um escalar numerico ou uma matriz."
+            throw "O parametro a deve ser composto de matrizes."
         }
 
         
@@ -121,13 +110,13 @@ class LinearAlgebra{
             }
         }
 
-        let c = new Matrix(a.cols, a.rows);
+        let c = new Matrix(a.rows, a.cols);
 
         for(let i = 1; i <= c.rows; i++)
         {
             for(let j = 1; j <= c.cols; j++)
             {
-                c.set(i, j, a.get(j, i) / b.get(i, j));
+                c.set(i, j, a.get(i, j) / b.get(i, j));
             }
         }
 
@@ -137,16 +126,21 @@ class LinearAlgebra{
     //funcao multiplicacao de matriz ou matriz x matriz
     dot(a,b)
     {
+        if(typeof b != "object" || !(b instanceof Matrix) || (typeof a != "object" || !(a instanceof Matrix)))
+        {
+            throw "O parametro b deve ser uma matrix."
+        }
+
         if(a.cols != b.rows)
             throw "matrizes incompativeis. Num de colunas de A diferente do num de linhas  de B"
 
-        let c = new Matrix(a.cols,b.rows)
+        let c = new Matrix(a.rows,b.cols)
 
         for(var i=1; i<= a.rows; i++)
         {
             for(var j=1; j<=b.cols; j++)
             {
-                for(var k=1; k<=a.rows; k++)
+                for(var k=1; k<=a.cols; k++)
                 {
                     c.set(i, j, c.get(i,j) + a.get(i,k)*b.get(k,j))
                 }
@@ -156,8 +150,97 @@ class LinearAlgebra{
         return c
     }
 
+    //algoritmo de gauss-jordan
     solve(a)
     {
-        return this.transpose(a);
+        var vetor = new Vector(matrizIn.rows)
+		var elementar = new OpElementares
+        var d = new Date();
+        var inicio
+        var fim
+        var i = 1
+        var j = 1
+
+        inicio = d.getTime()
+        //eliminação gaussiana
+        while(i <= a.rows && j <= a.cols)
+        {
+            //procurar por um numero não nulo na coluna j ou abaixo da linha i
+            var k = i 
+
+            while(k <= a.rows && a.get(k,j) == 0)   k++
+
+            //se k sair do while como menor que o num de linhas eh pq tem umm elemento n nulo na coluna j
+            if(k<=a.rows)
+            {
+                // se k não for a primeira linha, então trocar a linha k com a primeira linha
+                if(k!=i)
+                {
+                    elementar.trocaLinha(a, i, k)
+                }
+
+                if(a.get(i,j) != 1)
+                {
+                    elementar.dividirLinha(a,i,j)
+                }
+
+                elementar.somarConstante(a,i,j)
+                i++
+            }
+            j++;
+        }
+
+        var s = a.rows
+
+        j = 1
+        //Gauss-jordan
+        while(s>1)
+        {
+            var y = 1;
+            var pivo
+            var pivoIndexCol = 0
+            var naoNulo = 0
+            while(y<a.cols)
+            {
+                
+                if(a.get(s,y) == 1)
+                {
+                    naoNulo = 1;
+                    pivoIndexCol = y;
+                    break;
+                }
+                y++;
+            }
+
+            if(naoNulo == 1)
+            {
+                var k = s - 1
+
+                for(var h=0; h<s-1; h++)
+                {
+
+                    if(a.get(k,pivoIndexCol) != 0)
+                    {
+                        
+                        elementar.somaConstanteInversa(a,s,k,a.get(k,pivoIndexCol))
+
+                    }
+                    k--
+                }
+                 
+            }
+            s--
+        }
+        d = new Date();
+        fim = d.getTime()
+        
+        var colCorrente = a.cols
+        for(var w=1; w<=a.rows; w++)
+        {
+            vetor.set(w, a.get(w,a.cols))
+        }
+        console.log("Temp de execução: " + (fim - inicio))
+        console.log(vetor)
+        return vetor
     }
 }
